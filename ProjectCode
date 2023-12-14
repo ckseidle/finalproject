@@ -68,7 +68,7 @@ def clear_screen():
 
 def draw_board():
     clear_screen()
-    print(BORDER * (WIDTH + 23))  # Print top border
+    print(BORDER * (WIDTH + 23))  
 
     for y in range(HEIGHT):
         print(BORDER, end=' ')
@@ -80,26 +80,30 @@ def draw_board():
             elif (x, y) == food:
                 print(FOOD, end=' ')
             elif (x, y) in obstacles:
-                print(OBSTACLE, end=' ')  # Obstacle representation
+                print(OBSTACLE, end=' ')  
             else:
                 print(' ', end=' ')
-        print(BORDER)  # Print right border
+        print(BORDER)  
 
-    print(BORDER * (WIDTH + 23))  # Print bottom border
+    print(BORDER * (WIDTH + 23))  
     print(f"Score: {score}")
 
-# Helper function to iterate through nodes
+
 def iterate_nodes(node):
     while node:
         yield node
         node = node.next
 
-# Get user input
+
 def get_user_input():
     while True:
         key = input("Enter a direction (w/a/s/d) or 'q' to quit: ").lower()
         if key in ['w', 'a', 's', 'd', 'q']:
             return key
+
+
+
+directions = {'w': (0, -1), 's': (0, 1), 'a': (-1, 0), 'd': (1, 0)}
 
 
 while True:
@@ -111,14 +115,10 @@ while True:
         print("Quit the game!")
         break
 
-    if user_input == 'w' and direction != (0, 1):
-        direction = (0, -1)
-    elif user_input == 's' and direction != (0, -1):
-        direction = (0, 1)
-    elif user_input == 'a' and direction != (1, 0):
-        direction = (-1, 0)
-    elif user_input == 'd' and direction != (-1, 0):
-        direction = (1, 0)
+    if user_input in directions:
+        new_direction = directions[user_input]
+        if new_direction != (-direction[0], -direction[1]):  
+            direction = new_direction
 
     new_head = (snake.head.data[0] + direction[0], snake.head.data[1] + direction[1])
 
@@ -126,11 +126,12 @@ while True:
         score += 1
         snake.insert(new_head)
         food = (random.randint(0, WIDTH - 1), random.randint(0, HEIGHT - 1))
-        obstacles.append((random.randint(0, WIDTH - 1), random.randint(0, HEIGHT - 1)))  # Add a new obstacle
+        obstacles.append((random.randint(0, WIDTH - 1), random.randint(0, HEIGHT - 1)))  
     else:
         snake.insert(new_head)
-        snake.delete()  
-
+        if new_head != food:
+            snake.delete()  
+            
     if (new_head[0] < 0 or new_head[0] >= WIDTH or
         new_head[1] < 0 or new_head[1] >= HEIGHT or
         any(node.data == new_head for node in iterate_nodes(snake.head.next)) or
