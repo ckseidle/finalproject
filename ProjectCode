@@ -19,9 +19,16 @@ class LinkedList:
     def delete(self):
         if self.head is None:
             return None
-        temp = self.head
-        self.head = self.head.next
-        return temp.data
+        current = self.head
+        prev = None
+        while current.next:
+            prev = current
+            current = current.next
+        if prev:
+            prev.next = None
+        else:
+            self.head = None
+        return current.data
 
     def __contains__(self, item):
         current = self.head
@@ -81,13 +88,13 @@ def draw_board():
     print(BORDER * (WIDTH + 23))  # Print bottom border
     print(f"Score: {score}")
 
-
+# Helper function to iterate through nodes
 def iterate_nodes(node):
     while node:
         yield node
         node = node.next
 
-
+# Get user input
 def get_user_input():
     while True:
         key = input("Enter a direction (w/a/s/d) or 'q' to quit: ").lower()
@@ -122,7 +129,7 @@ while True:
         obstacles.append((random.randint(0, WIDTH - 1), random.randint(0, HEIGHT - 1)))  # Add a new obstacle
     else:
         snake.insert(new_head)
-        snake.delete()
+        snake.delete()  
 
     if (new_head[0] < 0 or new_head[0] >= WIDTH or
         new_head[1] < 0 or new_head[1] >= HEIGHT or
